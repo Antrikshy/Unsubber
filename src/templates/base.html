@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>Unsubber</title>
+</head>
+<body>
+  <header>
+    <h1>Unsubber</h1>
+  </header>
+  <div class="content">{% block content %}{% endblock %}</div>
+  <div class="footer">
+    <p>
+      A thing by <a href="https://antrikshy.com">Antriksh Yadav</a>. Not affiliated with Reddit.<br/>
+      <a href="https://github.com/Antrikshy/Unsubber">Source on GitHub.</a>
+    </p>
+  </div>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

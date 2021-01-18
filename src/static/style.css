@@ -1,0 +1,95 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #2f323a;
+  color: #fff;
+}
+
+a {
+  color: #fff;
+}
+
+header, .footer {
+  width: 100%;
+  text-align: center;
+}
+
+.footer {
+  margin-top: 5vh;
+  height: 10vh;
+}
+.content {
+  padding: 0 3vw;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.login-hero {
+  padding: 5vh 15vw;
+}
+
+.subreddit-tile {
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #fff;
+  text-align: left;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #2f323a;
+  cursor: default;
+  transition: 2s;
+}
+.subreddit-tile a {
+  color: #000;
+  cursor: pointer;
+}
+.subreddit-tile.unsubscribed {
+  filter: grayscale(50%);
+}
+.unsubscribe-controls {
+  display: inline-block;
+  min-width: 2rem;
+  padding-left: 5px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+}
+.unsub-button {
+  color: #e94f37;
+}
+.unsub-undo-button {
+  color: #2a9d8f;
+}
+.label {
+  display: inline-block;
+  padding: 0 3px;
+  border-radius: 2px;
+}
+.label.active {
+  color: #fff;
+  background-color: #2a9d8f;
+}
+.label.inactive {
+  color: #fff;
+  background-color: #e94f37;
+}
+.label.processing {
+  animation: pulse 1s infinite;
+}
+.label.processing:after {
+ content: '...';
+}
+
+@keyframes pulse {
+  0% {
+    filter: opacity(0.3);
+  }
+  100% {
+    filter: opacity(1.0);
+  }
+}
