@@ -150,13 +150,16 @@ class App extends React.Component {
       });
     }).catch(err => {
       if (err.response && err.response.status == 401) {
-        window.location.href = "/";
+        window.location.href = '/';
       }
     });
   }
 
   render() {
-    return e(SubredditList, { subreddits: this.state.subreddits });
+    return (this.state.subreddits.length == 0
+      ? e('div', {className: 'loading-indicator'}, 'Fetching your subreddits...')
+      : e(SubredditList, { subreddits: this.state.subreddits })
+    )
   }
 }
 

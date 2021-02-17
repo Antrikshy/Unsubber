@@ -1,7 +1,7 @@
 import os
 import time
 import itertools
-import multiprocessing as mp
+import multiprocessing.dummy as mp
 import sqlite3
 from datetime import datetime
 
@@ -17,7 +17,9 @@ _REDDIT_AUTH_URL_TEMPLATE = _REDDIT_ROOT_URL + \
     '/api/v1/authorize?client_id={}&response_type={}&state={}&redirect_uri={}&duration={}&scope={}'
 _APP_CLIENT_ID = os.environ['UNSUBBER_CLIENT_ID']
 _APP_CLIENT_SECRET = os.environ['UNSUBBER_CLIENT_SECRET']
-_APP_REDIRECT_URL = 'http://unsubber.antrikshy.com/oauth-redirect'
+_APP_REDIRECT_URL = ('http://127.0.0.1:5000/oauth-redirect'
+                     if os.environ['FLASK_ENV'] == 'development' else
+                     'http://unsubber.antrikshy.com/oauth-redirect')
 _APP_HTTP_REQUEST_HEADER = {'User-Agent': 'Unsubber by u/Antrikshy'}
 _CACHE_DB_FILE_NAME = './subreddit_activity.db'
 _CACHE_DB_TABLE_NAME = 'active_subreddits'
@@ -70,24 +72,6 @@ def _get_all_user_subreddits(access_token):
             for i in j_res['data']['children']
         ]
     return subreddits
-    # return [
-    #     {
-    #         'display_name': 'blog',
-    #         'subscribers': 12345
-    #     },
-    #     {
-    #         'display_name': 'redesign',
-    #         'subscribers': 12345
-    #     },
-    #     {
-    #         'display_name': 'wolframalpha',
-    #         'subscribers': 12345
-    #     },
-    #     {
-    #         'display_name': 'announcements',
-    #         'subscribers': 12345
-    #     }
-    # ]
 
 
 def _is_subreddit_active(subreddit, access_token):
@@ -137,7 +121,7 @@ def _is_subreddit_active(subreddit, access_token):
                         break
                 if num_recent_posts < 15:
                     subreddit_is_active = False
-        cursor.execute(f'INSERT INTO {_CACHE_DB_TABLE_NAME} VALUES (?, ?, CURRENT_TIMESTAMP)', [subreddit, 1 if subreddit_is_active else 0])
+        cursor.execute(f'INSERT OR REPLACE INTO {_CACHE_DB_TABLE_NAME} VALUES (?, ?, CURRENT_TIMESTAMP)', [subreddit, 1 if subreddit_is_active else 0])
         conn.commit()
     conn.close()
     return {'is_active': subreddit_is_active, 'subreddit': subreddit, 'cached': cached}
@@ -203,7 +187,7 @@ def get_subreddit_states():
     with mp.Pool(5) as pool:
         active_states = list(
             pool.starmap(
-                _is_subreddit_active, 
+                _is_subreddit_active,
                 zip(subreddits, itertools.repeat(token)))
         )
     return jsonify(active_states=active_states)

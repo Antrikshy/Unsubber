@@ -4,9 +4,10 @@ html, body {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'Nunito', sans-serif;
   background-color: #2f323a;
   color: #fff;
+  font-size: 16px;
 }
 
 a {
@@ -17,19 +18,27 @@ header, .footer {
   width: 100%;
   text-align: center;
 }
-
+header a {
+  font-size: 2.5rem;
+  text-decoration: none;
+}
 .footer {
   margin-top: 5vh;
   height: 10vh;
+  padding-bottom: 3rem;
 }
 .content {
   padding: 0 3vw;
-  min-height: 60vh;
+  min-height: 50vh;
   text-align: center;
 }
 
 .login-hero {
-  padding: 5vh 15vw;
+  font-size: 1.25rem;
+}
+
+.loading-indicator {
+  animation: pulse 1s infinite;
 }
 
 .subreddit-tile {
@@ -37,6 +46,7 @@ header, .footer {
   padding: 5px;
   margin: 5px;
   border: 1px solid #fff;
+  font-size: 0.85rem;
   text-align: left;
   border-radius: 4px;
   background-color: #fff;
@@ -91,5 +101,43 @@ header, .footer {
   }
   100% {
     filter: opacity(1.0);
+  }
+}
+
+@media (min-width: 0px) {
+  body {
+    font-size: 10px;
+  }
+  .login-hero {
+    padding: 1rem;
+  }
+  .subreddit-tile {
+    width: 80vw;
+  }
+}
+@media (min-width: 320px) {
+  body {
+    font-size: 12px;
+  }
+}
+@media (min-width: 641px) {
+  body {
+    font-size: 14px;
+  }
+  .login-hero {
+    padding: 5vh 15vw;
+  }
+  .subreddit-tile {
+    width: auto;
+  }
+}
+@media (min-width: 961px) {
+  body {
+    font-size: 16px;
+  }
+}
+@media (min-width: 1281px) {
+  .content {
+    padding: 0 10vw;
   }
 }
