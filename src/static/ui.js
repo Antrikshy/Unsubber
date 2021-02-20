@@ -117,10 +117,8 @@ class SubredditList extends React.Component {
     }, 0);
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.subreddits !== prevProps.subreddits) {
-      this.getSubredditStatesStaggered();
-    }
+  componentDidMount() {
+    this.getSubredditStatesStaggered();
   }
 
   render() {
