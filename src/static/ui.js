@@ -39,7 +39,7 @@ class SubredditItem extends React.Component {
   render() {
     const state = this.props.isActive == undefined ? 'processing' : this.props.isActive ? 'active' : 'inactive';
     return e('div',
-      {className: `subreddit-tile ${this.state.unsubscribed ? 'unsubscribed' : ''}`},
+      {className: `subreddit-tile ${state} ${this.state.unsubscribed ? 'unsubscribed' : ''}`},
       [
         e('a', {href: `https://www.reddit.com/r/${this.props.displayName}`, target: '_blank'},
           [
@@ -74,7 +74,8 @@ class SubredditList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeStates: {}
+      activeStates: {},
+      doneLoading: false
     };
     this.getSubredditStatesStaggered = this.getSubredditStatesStaggered.bind(this);
   }
@@ -87,7 +88,8 @@ class SubredditList extends React.Component {
     let slicer = 0;
     const updateActiveStates = newActiveStates => {
       this.setState({
-        activeStates: {...this.state.activeStates, ...newActiveStates}
+        activeStates: {...this.state.activeStates, ...newActiveStates},
+        doneLoading: Object.keys(this.state.activeStates).length + Object.keys(newActiveStates).length == allSubreddits.length
       });
     }
     setTimeout(function fetch() {
@@ -122,14 +124,21 @@ class SubredditList extends React.Component {
   }
 
   render() {
-    return this.props.subreddits.map(sub => e(SubredditItem, 
-      {
-        key: sub['display_name'],
-        displayName: sub['display_name'],
-        subscriberCount: sub['subscribers'],
-        isActive: this.state.activeStates[sub['display_name']]
-      })
-    );
+    return e('div', {}, [
+      e('div', {}, this.state.doneLoading ? null : [
+        e('span', {className: 'loading-indicator'}, 'Analyzing your subreddits. This could take a bit.'),
+        e('br'),
+        e('br'),
+      ]),
+      e('div', {}, this.props.subreddits.map(sub => e(SubredditItem, 
+        {
+          key: sub['display_name'],
+          displayName: sub['display_name'],
+          subscriberCount: sub['subscribers'],
+          isActive: this.state.activeStates[sub['display_name']]
+        })
+      ))
+    ]);
   }
 }
 
