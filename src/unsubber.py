@@ -19,7 +19,7 @@ _APP_CLIENT_ID = os.environ['UNSUBBER_CLIENT_ID']
 _APP_CLIENT_SECRET = os.environ['UNSUBBER_CLIENT_SECRET']
 _APP_REDIRECT_URL = ('http://127.0.0.1:5000/oauth-redirect'
                      if os.environ.get('FLASK_ENV') == 'development' else
-                     'http://unsubber.antrikshy.com/oauth-redirect')
+                     'https://unsubber.antrikshy.com/oauth-redirect')
 _APP_HTTP_REQUEST_HEADER = {'User-Agent': 'Unsubber by u/Antrikshy'}
 _CACHE_DB_FILE_NAME = './subreddit_activity.db'
 _CACHE_DB_TABLE_NAME = 'active_subreddits'
