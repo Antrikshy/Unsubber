@@ -38,7 +38,7 @@ header a {
 }
 .content {
   margin: 0 3vw;
-  min-height: 70vh;
+  min-height: 60vh;
   text-align: center;
 }
 
@@ -144,6 +144,9 @@ header a {
   }
   .subreddit-tile {
     width: auto;
+  }
+  .content {
+    min-height: 70vh;
   }
 }
 @media (min-width: 961px) {

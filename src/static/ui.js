@@ -84,6 +84,7 @@ class SubredditList extends React.Component {
     const _batchSize = 5;
     const _batchDelaySeconds = 5;
     const _expeditedBatchDelaySeconds = 2;
+    const _superExpeditedBatchDelaySeconds = 0.5;  // Just to be safe, don't wanna get DDOS'd
     const allSubreddits = this.props.subreddits.map(sub => sub['display_name']);
     let slicer = 0;
     const updateActiveStates = newActiveStates => {
@@ -92,6 +93,7 @@ class SubredditList extends React.Component {
         doneLoading: Object.keys(this.state.activeStates).length + Object.keys(newActiveStates).length == allSubreddits.length
       });
     }
+    // All this for Reddit rate limiting while using heuristics to make UX snappy
     setTimeout(function fetch() {
       const workingBatch = allSubreddits.slice(slicer, slicer + _batchSize);
       axios.get('/get-subreddit-states', { 
@@ -109,10 +111,16 @@ class SubredditList extends React.Component {
         }, 0);
         if (workingBatch.length == _batchSize) {
           slicer += _batchSize;
-          const delayBeforeNextBatch =
-            (numOfCachedSubs / _batchSize > 0.75) 
-              ? _expeditedBatchDelaySeconds * 1000 
-              : _batchDelaySeconds * 1000;
+          // Default delay between requests
+          let delayBeforeNextBatch = _batchDelaySeconds * 1000;
+          if (numOfCachedSubs / _batchSize > 0.75) {
+            // Slightly faster fetch next time if more than 75% were cached
+            delayBeforeNextBatch = _expeditedBatchDelaySeconds * 1000;
+          }
+          if (numOfCachedSubs == _batchSize) {
+            // Much faster fetch next time if all of them were cached
+            delayBeforeNextBatch = _superExpeditedBatchDelaySeconds * 1000;
+          }
           setTimeout(fetch, delayBeforeNextBatch);
         }
       });
