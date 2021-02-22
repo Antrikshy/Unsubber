@@ -5,11 +5,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <!-- Metadata for search engines -->
   <title>Unsubber - Clean up your Reddit subscriptions</title>
-  <meta name="description" content="Unsubber analyzes your Reddit subscriptions for inactive subreddits to help you tidy up the list.">
+  <meta name="description" content="Analyzes your Reddit subscriptions for inactive subreddits, so you can tidy up the list.">
+  <!-- Metadata for browsers -->
   <meta charset="UTF-8">
   <meta name="color-scheme" content="dark light">
   <meta name="viewport" content="width=device-width initial-scale=1">
+  <!-- Open Graph metadata -->
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ url_for('static', filename='Unsubber-Logo-Tall.png') }}">
 </head>
 <body>
   <header>

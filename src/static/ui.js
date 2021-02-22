@@ -144,7 +144,7 @@ class SubredditList extends React.Component {
     return e('div', {}, [
       e('div', {}, this.state.doneLoading
         ? [
-          e('span', {}, `${totalSubredditCount} subreddits analyzed. ${inactiveSubredditCount} (~${Math.round(inactiveSubredditCount / totalSubredditCount * 100)}%) appear inactive.`),
+          e('span', {}, `${totalSubredditCount} subreddits analyzed. ${inactiveSubredditCount} (~${Math.round(inactiveSubredditCount / totalSubredditCount * 100)}%) appear to be inactive.`),
           e('br'),
           e('br'),
         ] 
