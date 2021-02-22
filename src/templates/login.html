@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="login-hero">
+    <p>Unsubber analyzes recent activity on subreddits from your subscriptions, and uses heuristics to determine which ones are inactive.</p>
+    <br/>
     <p>Clean up your Reddit subscriptions.</p>
-    <a href="/login">Sign in with Reddit</a> to begin.
+    <p>
+      <a href="/login">Sign in with Reddit</a> to begin.
+      <br/>
+      <span class="login-disclaimer">Unsubber asks for minimal permissions that last an hour. It does not automatically unsubscribe you from any subreddits.</span>
+    </p>
   </div>
 {% endblock %}

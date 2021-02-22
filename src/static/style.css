@@ -45,6 +45,12 @@ header a {
 .login-hero {
   font-size: 1.25rem;
 }
+.login-disclaimer {
+  display: inline-block;
+  max-width: 25rem;
+  font-size: 0.85rem;
+  filter: opacity(0.5);
+}
 
 .loading-indicator {
   animation: pulse 1s infinite;

@@ -157,11 +157,15 @@ def handle_redirect():
         auth=requests.auth.HTTPBasicAuth(_APP_CLIENT_ID, _APP_CLIENT_SECRET),
         data=_generate_reddit_auth_code_payload(code),
         headers=_APP_HTTP_REQUEST_HEADER
-    )
-    token = auth_res.json()['access_token']
-    res = make_response(redirect('/unsub'))
-    res.set_cookie('access_token', token)
-    return res
+    ).json()
+    token = auth_res.get('access_token')
+    if token:
+        res = make_response(redirect('/unsub'))
+        res.set_cookie('access_token', token)
+        return res
+    else:
+        res = make_response(redirect('/'))
+        return res
 
 
 # ------------------------------------------

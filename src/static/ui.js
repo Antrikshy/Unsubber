@@ -90,7 +90,7 @@ class SubredditList extends React.Component {
     const updateActiveStates = newActiveStates => {
       this.setState({
         activeStates: {...this.state.activeStates, ...newActiveStates},
-        doneLoading: Object.keys(this.state.activeStates).length + Object.keys(newActiveStates).length == allSubreddits.length
+        doneLoading: Object.keys(this.state.activeStates).length + Object.keys(newActiveStates).length == this.props.subreddits.length
       });
     }
     // All this for Reddit rate limiting while using heuristics to make UX snappy
@@ -132,12 +132,28 @@ class SubredditList extends React.Component {
   }
 
   render() {
+    const totalSubredditCount = this.props.subreddits.length;
+    const inactiveSubredditCount = Object.values(this.state.activeStates).filter(s => !s).length;
+    if (totalSubredditCount == 0) {
+      return e('div', {}, [
+        'You have not joined any subreddits yet. ',
+        e('a', {href: 'https://www.reddit.com/subreddits', target: '_blank'}, 'Explore the catalog here'),
+        '.'
+      ]);
+    }
     return e('div', {}, [
-      e('div', {}, this.state.doneLoading ? null : [
-        e('span', {className: 'loading-indicator'}, 'Analyzing your subreddits. This could take a bit.'),
-        e('br'),
-        e('br'),
-      ]),
+      e('div', {}, this.state.doneLoading
+        ? [
+          e('span', {}, `${totalSubredditCount} subreddits analyzed. ${inactiveSubredditCount} (~${Math.round(inactiveSubredditCount / totalSubredditCount * 100)}%) appear inactive.`),
+          e('br'),
+          e('br'),
+        ] 
+        : [
+          e('span', {className: 'loading-indicator'}, 'Analyzing your subreddits. This could take a bit.'),
+          e('br'),
+          e('br'),
+        ]
+      ),
       e('div', {}, this.props.subreddits.map(sub => e(SubredditItem, 
         {
           key: sub['display_name'],
@@ -154,14 +170,16 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      subreddits: []
+      subreddits: [],
+      doneLoading: false
     };
   }
 
   componentDidMount() {
     axios.get('/my-subreddits', { withCredentials: true }).then(res => {
       this.setState({
-        subreddits: res.data.subreddits
+        subreddits: res.data.subreddits,
+        doneLoading: true
       });
     }).catch(err => {
       if (err.response && err.response.status == 401) {
@@ -171,9 +189,9 @@ class App extends React.Component {
   }
 
   render() {
-    return (this.state.subreddits.length == 0
-      ? e('div', {className: 'loading-indicator'}, 'Fetching your subreddits...')
-      : e(SubredditList, { subreddits: this.state.subreddits })
+    return (this.state.doneLoading
+      ? e(SubredditList, { subreddits: this.state.subreddits })
+      : e('div', {className: 'loading-indicator'}, 'Fetching your subreddits.')
     )
   }
 }
