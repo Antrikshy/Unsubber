@@ -91,38 +91,40 @@ def _is_subreddit_active(subreddit, access_token):
         # Requesting a list of newest posts, with the limit set to Reddit's maximum of 100
         url = f'{_REDDIT_OAUTH_ROOT_URL}/r/{subreddit}/new.json?limit=100'
         res = requests.get(url, headers={**_APP_HTTP_REQUEST_HEADER, 'Authorization': f'Bearer {access_token}'})
-        if res.status_code != 200:
-            res.raise_for_status()
-        j_res = res.json()
-        # Reading subreddit and post metadata
-        r_subreddit_data = j_res['data']['children']
-        if len(r_subreddit_data) == 0:
-            subreddit_is_active = False
-        else:
-            r_subreddit_subscribers = r_subreddit_data[0]['data']['subreddit_subscribers']
-            r_post_created_collation = list(map(lambda post: post['data']['created'], r_subreddit_data))
-            # Computing active state (aka #TheAlgorithm)
-            # Subreddit is deemed inactive...
-            # ... if it has under 300 subscribers
-            if r_subreddit_subscribers < 300:
+        if res.status_code == 200:
+            j_res = res.json()
+            # Reading subreddit and post metadata
+            r_subreddit_data = j_res['data']['children']
+            if len(r_subreddit_data) == 0:
                 subreddit_is_active = False
-            # ... or if the newest post is over 2 months old (should weed out very inactive ones)
-            elif time.time() - r_post_created_collation[0] > 5256000:
-                subreddit_is_active = False
-            # ... or...
             else:
-                # ... Loop through the newest 100 posts, or up to the last two months,
-                # whichever comes first, and deem inactive if there were fewer than 15 posts.
-                num_recent_posts = 0
-                for timestamp in r_post_created_collation:
-                    if time.time() - timestamp < 5256000:
-                        num_recent_posts += 1
-                    else:
-                        break
-                if num_recent_posts < 15:
+                r_subreddit_subscribers = r_subreddit_data[0]['data']['subreddit_subscribers']
+                r_post_created_collation = list(map(lambda post: post['data']['created'], r_subreddit_data))
+                # Computing active state (aka #TheAlgorithm)
+                # Subreddit is deemed inactive...
+                # ... if it has under 300 subscribers
+                if r_subreddit_subscribers < 300:
                     subreddit_is_active = False
-        cursor.execute(f'INSERT OR REPLACE INTO {_CACHE_DB_TABLE_NAME} VALUES (?, ?, CURRENT_TIMESTAMP)', [subreddit, 1 if subreddit_is_active else 0])
-        conn.commit()
+                # ... or if the newest post is over 2 months old (should weed out very inactive ones)
+                elif time.time() - r_post_created_collation[0] > 5256000:
+                    subreddit_is_active = False
+                # ... or...
+                else:
+                    # ... Loop through the newest 100 posts, or up to the last two months,
+                    # whichever comes first, and deem inactive if there were fewer than 15 posts.
+                    num_recent_posts = 0
+                    for timestamp in r_post_created_collation:
+                        if time.time() - timestamp < 5256000:
+                            num_recent_posts += 1
+                        else:
+                            break
+                    if num_recent_posts < 15:
+                        subreddit_is_active = False
+            cursor.execute(f'INSERT OR REPLACE INTO {_CACHE_DB_TABLE_NAME} VALUES (?, ?, CURRENT_TIMESTAMP)', [subreddit, 1 if subreddit_is_active else 0])
+            conn.commit()
+        else:
+            # This edge case check could be improved
+            subreddit_is_active = False
     conn.close()
     return {'is_active': subreddit_is_active, 'subreddit': subreddit, 'cached': cached}
 
