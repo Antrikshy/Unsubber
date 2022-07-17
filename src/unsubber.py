@@ -69,7 +69,8 @@ def _get_all_user_subreddits(access_token):
                 'display_name': i['data']['display_name'],
                 'subscribers': i['data']['subscribers']
             }
-            for i in j_res['data']['children']
+            # .startswith('u_') skips over followed users, keeping only subreddits
+            for i in j_res['data']['children'] if not i['data']['display_name'].startswith('u_')
         ]
     return subreddits
 
